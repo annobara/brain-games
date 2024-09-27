@@ -12,10 +12,10 @@ export default class GameEngine {
 
   private askQuestion(): void {
     console.log(this.game.question);
-    console.log(`Question: ${this.game.numbers.join(', ')}`);
   }
 
   private getAnswer(): Promise<void> {
+    console.log(`Question: ${this.game.numbers.join(', ')}`);
     return new Promise<void>((resolve) => {
       rl.question('Your answer: ', (answer) => {
         this.userAnswer = answer;
@@ -34,7 +34,6 @@ export default class GameEngine {
   }
 
   async startGame(): Promise<boolean> {
-    this.askQuestion();
     await this.getAnswer();
     this.checkAnswer();
     return this.isWon;
@@ -42,7 +41,10 @@ export default class GameEngine {
 
   async runRounds(GameClass: new () => IGame, currentRound: number = 1): Promise<boolean> {
     this.game = new GameClass();
+
+    if (currentRound === 1) this.askQuestion();
     this.isWon = await this.startGame();
+
     if (this.isWon && currentRound < this.roundNumber) {
       await this.runRounds(GameClass, currentRound + 1);
     }
